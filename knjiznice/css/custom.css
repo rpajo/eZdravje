@@ -1,0 +1,8 @@
+.panel-heading-bg {
+    background: url(../../slike/panelHeader.jpg) no-repeat !important;
+    background-position: center;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+}

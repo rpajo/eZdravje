@@ -40,3 +40,17 @@ function generirajPodatke(stPacienta) {
 
 
 // TODO: Tukaj implementirate funkcionalnost, ki jo podpira vaša aplikacija
+function addCilj(){
+  var li = document.createElement("li");
+  var input = document.getElementById("ciljiInput");
+  li.innerHTML = input.value;
+  li.className = "list-group-item";
+  if (true) {
+    input.value = "";
+    $("#cilji").append(li);
+  }
+}
+
+function BMI() {
+
+}
