@@ -51,6 +51,17 @@ function addCilj(){
   }
 }
 
-function BMI() {
+function addUser() {
 
+}
+
+function BMI() {
+  var teza = document.getElementById("teza").value;
+  var visina = document.getElementById("visina").value/100;
+  var bmi = teza/(visina*visina);
+  if (!isNaN(bmi)) {
+    bmi = bmi.toFixed(2);
+    console.log(bmi);
+    document.getElementById("bmi").value = bmi;
+  }
 }

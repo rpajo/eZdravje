@@ -6,3 +6,26 @@
     -moz-background-size: cover;
     -o-background-size: cover;
 }
+
+.left-side {
+    float: none;
+    display: table-cell;
+    border: 1px solid;
+}
+
+.right-side {
+    float: none;
+    display: table-cell;
+    border: 1px solid;
+}
+
+
+body {
+	background-image: url("../../slike/ozadje.jpg") ;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+blockquote {
+	text-align: center;
+}
