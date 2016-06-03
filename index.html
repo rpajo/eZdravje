@@ -11,8 +11,10 @@
 	</style>
 	<script src="knjiznice/js/jquery-2.2.3.min.js"></script>
 	<script src="knjiznice/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="knjiznice/fusioncharts/js/fusioncharts.js"></script>
+	<script type="text/javascript" src="knjiznice/fusioncharts/js/themes/fusioncharts.theme.fint.js"></script>	
 	<script src="knjiznice/js/koda.js"></script>
-	<script src="knjiznice/js/d3.js"></script>
+	<!--<script src="knjiznice/js/d3.js"></script>-->
 </head>
 <body>
 
@@ -47,17 +49,17 @@
 				<div class="panel panel-primary">
 					<div class="panel-heading">
 						<div class="row">
-							<div class="col-lg-6 col-md-6 col-sm-6"><h4><b>Ime priimek</b></h4></div>
+							<div class="col-lg-6 col-md-6 col-sm-6"><h4 style="padding-top:10px"><b>Ime priimek</b></h4></div>
 							<div class="col-lg-6 col-md-6 col-sm-6">
 								<span class="label label-default">Vnesi EHRid</span>
-					                <div class="input-group"  style="width:100%">
-					                    <input type="text" class="form-control" id="searchEHR" placeholder="254f791d-2e7c-49d9-b646-376f62d6ead5">
-					                    <span class="input-group-btn">
-					                        <button type="submit" onclick="getUser()" class="btn btn-default">
-					                        <span class="glyphicon glyphicon-search"></span>
-					                        </button>
-					                    </span>
-					                </div>
+									<div class="input-group"  style="width:100%">
+										<input type="text" class="form-control" id="searchEHR" placeholder="254f791d-2e7c-49d9-b646-376f62d6ead5">
+										<span class="input-group-btn">
+												<button type="submit" onclick="getUser()" class="btn btn-default">
+												<span class="glyphicon glyphicon-search"></span>
+												</button>
+										</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -76,13 +78,13 @@
 							</div>
 							<div class="col-lg-4 col-md-4 col-sm-4">
 								 <div class="form-group">
-							        <div class="input-group">  
-							        <span class="label label-default">BMI</span>
-							        <input type="text" id="bmi" class="form-control" placeholder="20.21" readonly="true" />
-							        <span class="input-group-btn" style="padding-top: 19px">
-							            <button class="btn btn-primary glyphicon glyphicon-refresh" onclick="BMI();"></button>
-							        </span>
-							        </div>
+											<div class="input-group">  
+											<span class="label label-default">BMI</span>
+											<input type="text" id="bmi" class="form-control" placeholder="20.21" readonly="true" />
+											<span class="input-group-btn" style="padding-top: 19px">
+												<button class="btn btn-primary glyphicon glyphicon-refresh" onclick="BMI();"></button>
+											</span>
+											</div>
 								</div>
 							</div>
 						</div>
@@ -91,7 +93,7 @@
 							<textarea style="resize:vertical" class="form-control hresize" rows="5" id="comment"></textarea>
 						</div>
 						<button type="button" class="btn btn-primary" onclick="saveUser()">Shrani podatke  <span class="glyphicon glyphicon-floppy-disk"></span></button>
-				  	</div>
+						</div>
 				</div>
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-3">
@@ -103,22 +105,23 @@
 					</div>
 					<div class="panel-body">
 						<ul class="list-group" id="cilji">
-						  <li class="list-group-item">Izguba teže</li>
-						  <li class="list-group-item">Pridobitev mišične mase</li>
-						  <li class="list-group-item">Okrevanje poškodbe</li>
+							<li class="list-group-item">Izguba teže</li>
+							<li class="list-group-item">Pridobitev mišične mase</li>
+							<li class="list-group-item">Okrevanje poškodbe</li>
 						</ul>
 						<div class="col-xs-10" style="padding-left: 2px">
 							<input type="text" id="ciljiInput" class="form-control input-sm" aria-describedby="helpBlock" placeholder="Vnesite nov cilj">
 						</div>
 						<button type="button" class="btn btn-default btn-xs" onclick="addCilj()"><span class="glyphicon glyphicon-plus"></span></button>
-				  	</div>
+						</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-
 	<!-- KONEC PODATKOV UPORABNIKA -->
+	
+	<!--ACTIVITY PANEL-->
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading-bg">
@@ -131,95 +134,88 @@
 				<div class="row">
 					<div class="col-lg-6 col-md-6 col-sm-6">
 						<div class = "panel panel-info" >
-						   <div class = "panel-heading">
-						      <h3 class = "panel-title">
-						      	Predlogi
-						      </h3>
-						   </div>
-						   
-						   <div class = "panel-body">
-						   		<ul class="list-group" id="cilji">
-								  <li class="list-group-item">Vaje za moč</li>
-								  <li class="list-group-item">Dieta</li>
-								  <li class="list-group-item">Počivanje</li>
+							 <div class = "panel-heading">
+									<h3 class = "panel-title">
+										Predlogi
+									</h3>
+							 </div>
+							 
+							 <div class = "panel-body">
+							 		<ul class="list-group" id="cilji">
+									<li class="list-group-item">Vaje za moč</li>
+									<li class="list-group-item">Dieta</li>
+									<li class="list-group-item">Počivanje</li>
 								</ul>
-						   </div>
+							 </div>
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6 col-sm-6">
 						<div class = "panel panel-info">
 							<div class = "panel-heading">
-						      <h3 class = "panel-title">
-						      	Iskalec vaj
-						      </h3>
-						   </div>
-						   
-						   <div class = "panel-body">
-						   		<div class="input-group">
-						            <input type="text" class="form-control" placeholder="Vnesi ime vaje" name="srch-term" id="isciVajo">
-						            <div class="input-group-btn">
-						                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-						            </div>
-						        </div>
-						        <p class="text-center">ali izberi željeno skupino mišic</p>
-						    	<div class="form-group">
-					            	<select class="combobox input-large form-control" name="normal">
-					            		<option value="" selected="selected">Izberite Mišico</option>	
-					            	</select>
-            					</div>
-						   </div>
+									<h3 class = "panel-title">
+										Iskalec vaj
+									</h3>
+							 </div>
+							 
+							 <div class = "panel-body">
+							 		<div class="input-group">
+												<input type="text" class="form-control" placeholder="Vnesi ime vaje" name="srch-term" id="isciVajo">
+												<div class="input-group-btn">
+														<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+												</div>
+										</div>
+										<p class="text-center">ali izberi željeno skupino mišic</p>
+									<div class="form-group">
+												<select class="combobox input-large form-control" name="normal">
+													<option value="" selected="selected">Izberite Mišico</option>	
+												</select>
+											</div>
+							 </div>
 						</div>
 					</div>
 				</div>
 
 				<div class="row">
-					<div id="chart" class="col-lg-6 col-md-6 col-sm-6"></div>
-				    <script src="d3.v3.min.js"></script>
-				    <script>
-				      (function(d3) {
-				        'use strict';
+					<div id="chart" class="col-lg-6 col-md-6 col-sm-6">
+						
+						<ul class="nav nav-tabs">
+							<li class="active"><a data-toggle="tab" href="#chartTeza">Teža</a></li>
+							<li><a data-toggle="tab" href="#chartMascoba">Maščoba</a></li>
+							<li><a data-toggle="tab" href="#chartRutina">Rutina</a></li>
 
-				        var dataset = [
-				          { label: 'Abulia', count: 10 }, 
-				          { label: 'Betelgeuse', count: 20 },
-				          { label: 'Cantaloupe', count: 30 },
-				          { label: 'Dijkstra', count: 40 }
-				        ];
+						</ul>
 
-				        var width = 360;
-				        var height = 360;
-				        var radius = Math.min(width, height) / 2;
-
-				        var color = d3.scale.category20b();
-
-				        var svg = d3.select('#chart')
-				          .append('svg')
-				          .attr('width', width)
-				          .attr('height', height)
-				          .append('g')
-				          .attr('transform', 'translate(' + (width / 2) + 
-				            ',' + (height / 2) + ')');
-
-				        var arc = d3.svg.arc()
-				          .outerRadius(radius);
-
-				        var pie = d3.layout.pie()
-				          .value(function(d) { return d.count; })
-				          .sort(null);
-
-				        var path = svg.selectAll('path')
-				          .data(pie(dataset))
-				          .enter()
-				          .append('path')
-				          .attr('d', arc)
-				          .attr('fill', function(d, i) { 
-				            return color(d.data.label);
-				          });
-
-				      })(window.d3);
-				    </script>
-
-				    
+						<div class="tab-content">
+							<div id="chartTeza" class="tab-pane fade in active">
+								<h3>Graf Teže</h3>
+								<div id="chartContainerTeza">FusionCharts XT will load here!</div>
+								<script>
+										
+								</script>
+							</div>
+							<div id="chartMascoba" class="tab-pane fade">
+								<h3>Graf Maščobe</h3>
+								<div id="chartContainerTeza">FusionCharts XT will load here!</div>
+							</div>
+							<div id="chartRutina" class="tab-pane fade">
+								<h3>Tednska Rutina</h3>
+								<div id="chartContainerMisicnaMasa">FusionCharts XT will load here!</div>
+							</div>
+						</div>
+					</div>
+					
+					<div id="prikazVaje" class="col-lg-6 col-md-6 col-sm-6">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<select class="combobox input-large form-control" name="normal">
+									<option value="" selected="selected">Izberite Vajo</option>	
+								</select>
+							</div>
+							<div class="panel-body">
+								<p>VSEBINA...</p>
+							</div>
+						</div>
+					</div>	
 				</div>
 			</div>
 		</div>
@@ -227,45 +223,45 @@
 	<!-- ACTIVITY END-->
 	<div class="conteiner">
 		<blockquote>
-		  <p>“The human body is the best work of art.”</p>
-		  <footer><cite>Jess C. Scott</cite></footer>
+			<p>“The human body is the best work of art.”</p>
+			<footer><cite>Jess C. Scott</cite></footer>
 		</blockquote>
 
-		<!-- Modal -->
+		<!-- New User Window-->
 		<div class="modal fade" id="newUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		        <h4 class="modal-title" id="myModalLabel">Nov Uporabnik</h4>
-		    	</div>
-		    	<div class="modal-body">
-		    		<span class="label label-default">Ime</span><input type="text" class="form-control input-mini" placeholder="Miha">
-					<span class="label label-default">Priimek</span><input type="text" class="form-control" placeholder="Novak">
-					<span class="label label-default">Datum rojstva</span><input type="text" class="form-control" placeholder="dd-mm-ll">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Nov Uporabnik</h4>
+					</div>
+					<div class="modal-body">
+						<span class="label label-default">Ime</span><input type="text" class="form-control input-mini" id="newIme" placeholder="Miha">
+					<span class="label label-default">Priimek</span><input type="text" class="form-control" id="newPriimek" placeholder="Novak">
+					<span class="label label-default">Datum rojstva</span><input type="text" class="form-control" id="newDatumRojstva" placeholder="dd-mm-ll">
 					
 					<div class="row">
 						<div class="col-lg-4 col-md-4 col-sm-4">
-							<span class="label label-default">Telesna teža</span><div class="input-group"><input type="text" class="form-control input-mini" placeholder="90.00"><span class="input-group-addon">kg</span></div>
+							<span class="label label-default">Telesna teža</span><div class="input-group"><input type="text" id="newTeza" class="form-control input-mini" placeholder="90.00"><span class="input-group-addon">kg</span></div>
 						</div>
 						<div class="col-lg-4 col-md-4 col-sm-4">
-							<span class="label label-default">Mišična masa</span><div class="input-group"><input type="text" class="form-control input-mini" placeholder="70"><span class="input-group-addon">%</span></div>
+							<span class="label label-default">Mišična masa</span><div class="input-group"><input type="text" id="newMisicnaMasa" class="form-control input-mini" placeholder="70"><span class="input-group-addon">%</span></div>
 						</div>
 						<div class="col-lg-4 col-md-4 col-sm-4">
-							<span class="label label-default">Višina</span><div class="input-group"><input type="text" class="form-control input-mini" placeholder="175"><span class="input-group-addon">cm</span></div>
+							<span class="label label-default">Višina</span><div class="input-group"><input type="text" id="newVisina" class="form-control input-mini" placeholder="175"><span class="input-group-addon">cm</span></div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="comment">Komentar:</label>
-						<textarea style="resize:vertical" class="form-control hresize" rows="5" id="comment"></textarea>
+						<textarea style="resize:vertical" class="form-control hresize" rows="5" id="newComment"></textarea>
 					</div>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Prekliči</button>
-		        <button type="button" class="btn btn-primary" onclick="addUser()">Dodaj Uporabnika</button>
-		      </div>
-		    </div>
-		  </div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Prekliči</button>
+						<button type="button" class="btn btn-primary" onclick="addUser()">Dodaj Uporabnika</button>
+					</div>
+				</div>
+			</div>
 		</div>
 
 
