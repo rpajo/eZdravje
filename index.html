@@ -81,7 +81,7 @@
 							</div>
 							
 							<div class="col-lg-4 col-md-4 col-sm-4">
-								<span class="label label-default">Datum</span><div class="input-group"><input type="text" id="datum" class="form-control input-mini" placeholder="dd.mm.leto"><span class="input-group-addon">
+								<span class="label label-default">Datum</span><div class="input-group"><input type="text" id="datum" class="form-control input-mini" placeholder="leto.mm.dd"><span class="input-group-addon">
 									<i class="fa fa-calendar-o" aria-hidden="true"></i>
 								</span></div>
 							</div>
@@ -224,27 +224,27 @@
 					<div id="chart" class="col-lg-6 col-md-6 col-sm-6">
 						
 						<ul class="nav nav-tabs">
-							<li class="active"><a data-toggle="tab" href="#chartTeza">Teža</a></li>
-							<li><a data-toggle="tab" href="#chartMascoba">Maščoba</a></li>
-							<li><a data-toggle="tab" href="#chartRutina">Rutina</a></li>
+							<li class="active"><a data-toggle="tab" href="#chartTeza">Teža <button type="button" class="btn btn-primary btn-circle" onclick="grafTeza()">
+									<i class="fa fa-refresh" aria-hidden="true"></i>
+								</button></a></li>
+							<li><a data-toggle="tab" href="#chartMascoba">Maščoba <button type="button" class="btn btn-primary btn-circle" onclick="grafMascoba()">
+									<i class="fa fa-refresh" aria-hidden="true"></i>
+								</button></a></li>
+							<li><a data-toggle="tab" href="#chartRutina">Rutina <button type="button" class="btn btn-primary btn-circle" onclick="grafRutina()">
+									<i class="fa fa-refresh" aria-hidden="true"></i>
+								</button></a></li>
 
 						</ul>
 
 						<div class="tab-content">
 							<div id="chartTeza" class="tab-pane fade in active">
-								<h3>Graf Teže</h3>
-								<div id="chartContainerTeza">FusionCharts XT will load here!</div>
-								<script>
-										
-								</script>
+								<div id="chartContainerTeza" class="text-center">Naloži uporabnika in pritisni <i class="fa fa-refresh" aria-hidden="true"></i> za izris grafa</div>
 							</div>
 							<div id="chartMascoba" class="tab-pane fade">
-								<h3>Graf Maščobe</h3>
-								<div id="chartContainerTeza">FusionCharts XT will load here!</div>
+								<div id="chartContainerTeza" class="text-center">Naloži uporabnika in pritisni <i class="fa fa-refresh" aria-hidden="true"></i> za izris grafa</div>
 							</div>
 							<div id="chartRutina" class="tab-pane fade">
-								<h3>Tednska Rutina</h3>
-								<div id="chartContainerMisicnaMasa">FusionCharts XT will load here!</div>
+								<div id="chartContainerTeza" class="text-center">Naloži uporabnika in pritisni <i class="fa fa-refresh" aria-hidden="true"></i> za izris grafa</div>
 							</div>
 						</div>
 					</div>
