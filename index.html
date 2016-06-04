@@ -6,6 +6,7 @@
 	<link href="knjiznice/css/bootstrap.min.css" rel="stylesheet">
 	<link href="knjiznice/css/simple-sidebar.css" rel="stylesheet">
 	<link href="knjiznice/css/custom.css" rel="stylesheet">
+	<link rel="stylesheet" href="knjiznice/font-awesome-4.6.3/css/font-awesome.min.css">
 	<style>
 		body {padding-top: 70px;}
 	</style>
@@ -49,7 +50,7 @@
 				<div class="panel panel-primary">
 					<div class="panel-heading">
 						<div class="row">
-							<div class="col-lg-6 col-md-6 col-sm-6"><h4 style="padding-top:10px"><b>Ime priimek</b></h4></div>
+							<div class="col-lg-6 col-md-6 col-sm-6"><h4 style="padding-top:10px"><b>Ime priimek </b><i id="sex" class="fa fa-mars" aria-hidden="true"></i></h4></div>
 							<div class="col-lg-6 col-md-6 col-sm-6">
 								<span class="label label-default">Vnesi EHRid</span>
 									<div class="input-group"  style="width:100%">
@@ -64,36 +65,80 @@
 						</div>
 					</div>
 					<div class="panel-body">
+						<span class="label label-default">EHRid uporabnika</span><input type="text" class="form-control input-mini" id="EHRid" placeholder="254f791d-2e7c-49d9-b646-376f62d6ead5" readonly="true">
 						<span class="label label-default">Ime</span><input type="text" class="form-control input-mini" id="ime" placeholder="Miha">
 						<span class="label label-default">Priimek</span><input type="text" class="form-control" id="priimek" placeholder="Novak">
-						<span class="label label-default">Datum rojstva</span><input type="text" class="form-control" id="datumRojstva" placeholder="dd-mm-ll">
-						<span class="label label-default">Višina</span><div class="input-group"><input type="text" id="visina" class="form-control input-mini" 
-						placeholder="195"><span class="input-group-addon">cm</span></div>
+						<span class="label label-default">Datum rojstva</span><input type="text" class="form-control" id="datumRojstva" placeholder="leto-mm-dd">
+						<hr/>
+						<!--1. VRSTICA - višina, maščoba, datum-->
 						<div class="row">
 							<div class="col-lg-4 col-md-4 col-sm-4">
-								<span class="label label-default">Telesna teža</span><div class="input-group"><input id="teza" type="text" class="form-control input-mini" placeholder="90.00"><span class="input-group-addon">kg</span></div>
+								<span class="label label-default">Višina</span><div class="input-group"><input type="text" id="visina" class="form-control input-mini" placeholder="195"><span class="input-group-addon">cm</span></div>
+							</div>
+
+							<div class="col-lg-4 col-md-4 col-sm-4">
+								<span class="label label-default">Maščoba</span><div class="input-group"><input id="mascoba" type="text" class="form-control input-mini" placeholder="20"><span class="input-group-addon">%</span></div>
+							</div>
+							
+							<div class="col-lg-4 col-md-4 col-sm-4">
+								<span class="label label-default">Datum</span><div class="input-group"><input type="text" id="datum" class="form-control input-mini" placeholder="dd.mm.leto"><span class="input-group-addon">
+									<i class="fa fa-calendar-o" aria-hidden="true"></i>
+								</span></div>
+							</div>
+						</div>
+						
+						<!--2. VRSTICA - teža, bmi, bmi odziv-->
+						<div class="row">
+							<div class="col-lg-4 col-md-4 col-sm-4">
+								<span class="label label-default">Telesna teža</span><div class="input-group"><input id="teza" type="text" class="form-control input-mini" placeholder="90.00"><span class="input-group-addon">kg</span></div>								
 							</div>
 							<div class="col-lg-4 col-md-4 col-sm-4">
-								<span class="label label-default">Mišična masa</span><div class="input-group"><input id="misicnaMasa" type="text" class="form-control input-mini" placeholder="70"><span class="input-group-addon">%</span></div>
+								 <div class="form-group" style="margin-bottom: 0px">
+									<div class="input-group">  
+										<span class="label label-default">BMI</span>
+										<input type="text" id="bmi" class="form-control" placeholder="20.21" readonly="true" />
+										<span class="input-group-btn" style="padding-top: 19px">
+											<button class="btn btn-primary glyphicon glyphicon-refresh" onclick="BMI();"></button>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-4 col-md-4 col-sm-4" id="BMIfeedback"></div>
+						</div>
+						
+						<!--3. VRSTICA - pas, bai, bai odziv-->
+						<div class="row">
+							<div class="col-lg-4 col-md-4 col-sm-4">
+								<span class="label label-default">Obseg Pasu</span><div class="input-group"><input id="obsegPasu" type="text" class="form-control input-mini" placeholder="112"><span class="input-group-addon">cm</span></div>
 							</div>
 							<div class="col-lg-4 col-md-4 col-sm-4">
 								 <div class="form-group">
-											<div class="input-group">  
-											<span class="label label-default">BMI</span>
-											<input type="text" id="bmi" class="form-control" placeholder="20.21" readonly="true" />
+										<div class="input-group">  
+											<span class="label label-default">BAI</span>
+											<input type="text" id="bai" class="form-control" placeholder="25" readonly="true" />
 											<span class="input-group-btn" style="padding-top: 19px">
-												<button class="btn btn-primary glyphicon glyphicon-refresh" onclick="BMI();"></button>
+												<button class="btn btn-primary glyphicon glyphicon-refresh" onclick="BAI();"></button>
 											</span>
-											</div>
+										</div>
 								</div>
 							</div>
+							<div class="col-lg-4 col-md-4 col-sm-4" id="BAIfeedback"></div>
 						</div>
 						<div class="form-group">
 							<label for="comment">Komentar:</label>
 							<textarea style="resize:vertical" class="form-control hresize" rows="5" id="comment"></textarea>
 						</div>
-						<button type="button" class="btn btn-primary" onclick="saveUser()">Shrani podatke  <span class="glyphicon glyphicon-floppy-disk"></span></button>
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-sm-6">
+								<div class="btn-group">
+									<button type="button" class="btn btn-primary" onclick="getUserData()">Naloži zadnje podatke  <i class="fa fa-cloud-download" aria-hidden="true"></i></button>
+									<button type="button" class="btn btn-primary" onclick="uploadData(0)">Shrani podatke  <span class="glyphicon glyphicon-floppy-disk"></span></button>
+								</div>
+								
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6" id="saveFeedback"></div>
 						</div>
+					</div>
 				</div>
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-3">
@@ -238,27 +283,33 @@
 					<div class="modal-body">
 						<span class="label label-default">Ime</span><input type="text" class="form-control input-mini" id="newIme" placeholder="Miha">
 					<span class="label label-default">Priimek</span><input type="text" class="form-control" id="newPriimek" placeholder="Novak">
-					<span class="label label-default">Datum rojstva</span><input type="text" class="form-control" id="newDatumRojstva" placeholder="dd-mm-ll">
-					
+					<span class="label label-default">Datum rojstva</span><input type="text" class="form-control" id="newDatumRojstva" placeholder="leto-mm-dd">
+					<hr/>
 					<div class="row">
-						<div class="col-lg-4 col-md-4 col-sm-4">
+						<div class="col-lg-3 col-md-3 col-sm-3">
 							<span class="label label-default">Telesna teža</span><div class="input-group"><input type="text" id="newTeza" class="form-control input-mini" placeholder="90.00"><span class="input-group-addon">kg</span></div>
 						</div>
-						<div class="col-lg-4 col-md-4 col-sm-4">
-							<span class="label label-default">Mišična masa</span><div class="input-group"><input type="text" id="newMisicnaMasa" class="form-control input-mini" placeholder="70"><span class="input-group-addon">%</span></div>
+						<div class="col-lg-3 col-md-3 col-sm-3">
+							<span class="label label-default">Maščoba</span><div class="input-group"><input type="text" id="newMascoba" class="form-control input-mini" placeholder="20"><span class="input-group-addon">%</span></div>
 						</div>
-						<div class="col-lg-4 col-md-4 col-sm-4">
+						<div class="col-lg-3 col-md-3 col-sm-3">
 							<span class="label label-default">Višina</span><div class="input-group"><input type="text" id="newVisina" class="form-control input-mini" placeholder="175"><span class="input-group-addon">cm</span></div>
+						</div>
+						<div class="col-lg-3 col-md-3 col-sm-3">
+							<span class="label label-default">Obseg pasu</span><div class="input-group"><input type="text" id="newObsegPasu" class="form-control input-mini" placeholder="110"><span class="input-group-addon">cm</span></div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="comment">Komentar:</label>
 						<textarea style="resize:vertical" class="form-control hresize" rows="5" id="newComment"></textarea>
 					</div>
+						<b><p class="text-center" id="newEHR"></p></b>
+						<b><p class="text-center" id="newFeedback"></p></b>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Prekliči</button>
-						<button type="button" class="btn btn-primary" onclick="addUser()">Dodaj Uporabnika</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="clearCreate()">Zapri</button>
+						<button type="button" id = "create" class="btn btn-primary" onclick="addUser()">Kreiraj Uporabnika</button>
+						<button type="button" id = "upload" disabled="true" class="btn btn-success" onclick="uploadData(1)">Naloži podatke</button>
 					</div>
 				</div>
 			</div>
