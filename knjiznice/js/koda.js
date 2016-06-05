@@ -188,11 +188,13 @@ function uploadData(newUser) {
         var komentar = $("#comment").val();
     }
     console.log(ehrId);
-    console.log(ehrId.length);
 	if (!ehrId || ehrId.trim().length == 0) {
 		$("#saveFeedback").html("<span class='obvestilo label " +
       "label-warning fade-in'>Naložite uporabnika z ustreznim erhId</span>");
 	} else {
+        ciljiArray.push(komentar);
+        localStorage[ehrId] = JSON.stringify(ciljiArray);
+        console.log("local saved: " +  JSON.stringify(ciljiArray));
 		$.ajaxSetup({
 		    headers: {"Ehr-Session": sessionId}
 		});
@@ -256,7 +258,20 @@ function getUser() {
                document.getElementById('ime').value = uporabnik.firstNames;
                document.getElementById('priimek').value = uporabnik.lastNames;
                document.getElementById('datumRojstva').value = uporabnik.dateOfBirth.substring(0,10);
-            },
+               document.getElementById('visina').value = "";
+               document.getElementById('teza').value = ""; 
+               document.getElementById('bmi').value = ""; 
+               document.getElementById('obsegPasu').value = ""; 
+               document.getElementById('bai').value = "";     
+               document.getElementById('mascoba').value = ""; 
+               document.getElementById('visina').value = "";
+               document.getElementById('BAIfeedback').innerHTML = ""; 
+               document.getElementById('BMIfeedback').innerHTML = ""; 
+               document.getElementById('datum').value = ""; 
+               document.getElementById('comment').value = ""; 
+               ciljiArray = [];
+               $("#cilji").empty();
+        },
 			error: function(err) {
 				$("#saveFeedback").html('<div class="alert alert-danger" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Napaka: ' +
           JSON.parse(err.responseText).userMessage + "'!</div>");
@@ -429,7 +444,23 @@ function getUserData() {
     
     if (!ehrId || ehrId.trim().length == 0) {
         $("#saveFeedback").html('<div class="alert alert-warning" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Prosim vnesite zahtevan podatek!</div>')
-	} else {
+    } else {
+        var temp = JSON.parse(localStorage.getItem(ehrId));
+        console.log("-------" + temp);
+        document.getElementById("comment").value = temp[temp.length-1];
+        ciljiArray = [];
+        for(var i = 0; i < temp.length-1; i++) {
+            ciljiArray[i] = temp[i];
+            var li = document.createElement("li");
+            var input = document.getElementById("newCilj");
+            var value =  temp[i];
+            li.innerHTML = value;
+            li.className = "list-group-item";
+            ciljiArray.push(value);
+            console.log(ciljiArray);
+            
+            $("#cilji").append(li);
+        }
 		$.ajax({
 			url: baseUrl + "/demographics/ehr/" + ehrId + "/party",
 	    	type: 'GET',
@@ -583,7 +614,6 @@ function BMI() {
   var bmi = teza/(visina*visina);
   if (!isNaN(bmi)) {
     bmi = bmi.toFixed(2);
-    console.log(bmi);
     document.getElementById("bmi").value = bmi;
     
     if(bmi < 18.5) {
@@ -604,7 +634,6 @@ function BAI() {
   var bai = pas/(Math.pow(visina, 1.5))-18;
   if (!isNaN(bai)) {
     bai = bai.toFixed(2);
-    console.log(bai);
     document.getElementById("bai").value = bai;
     
     if(bai < 8) {
