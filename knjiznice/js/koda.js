@@ -53,15 +53,18 @@ function addCilj(){
   $("#cilji").append(li);
 }
 
+function clearCilj() {
+    ciljiArray = [];
+    $("#cilji").empty();
+}
+
 function getPredloge() {
     $('#predlogi').empty();
     
     for (var i = 0; i < ciljiArray.length; i++) {
-        console.log(ciljiArray[i]);
         var li = document.createElement("li");
         li.className = "list-group-item";
         if (ciljiArray[i] == "Izguba teže") {
-            console.log("it");
             li.innerHTML = "Dieta";
             $("#predlogi").append(li);
             li = document.createElement("li");
@@ -70,7 +73,6 @@ function getPredloge() {
             $("#predlogi").append(li);
         }
         else if (ciljiArray[i] == "Pridobitev mišične mase") {
-            console.log("mm");
             li.innerHTML = "Trening z utežmi";
             $("#predlogi").append(li);
             li = document.createElement("li");
@@ -79,7 +81,6 @@ function getPredloge() {
             $("#predlogi").append(li);
         }
         else if (ciljiArray[i] == "Okrevanje poškodbe") {
-            console.log("op");
             li.innerHTML = "Fizioterapija";
             $("#predlogi").append(li);
             li = document.createElement("li");
@@ -88,8 +89,7 @@ function getPredloge() {
             $("#predlogi").append(li);
         }
         else if (ciljiArray[i] == "Pridobitev vzdržlivosti") {
-            console.log("pv");
-            li.innerHTML = "Anaeroban vadba";
+            li.innerHTML = "Anaerobna vadba";
             $("#predlogi").append(li);
             li = document.createElement("li");
             li.className = "list-group-item";
@@ -806,21 +806,48 @@ function grafMascoba() {
     });
 }
 // graf rutine
-    function grafRutina() {
+function grafRutina() {
+    // [0] - Cardio vadba; [1] - HIIT trening; [2] - počitek
+    // [3] - Trening z utežmi; [4] - Fizioterapija; [5] - Anaerobna vadba;
+    // [6] - trening z lastno težo
+    var labels = ["Cardio vadba", "HIIT trening", "Počitek", 
+                "Trening z utežmi", "Fizioterapija", "Anaerobna vadba", "Trening z lastno težo"];
+    var delezi = [0,0,0,0,0,0,0];
+    podatki = [];
+    for (var i in ciljiArray) {
+        
+        if (ciljiArray[i] == "Izguba teže") {
+            delezi[0] += 100;
+            delezi[1] += 50;
+            delezi[2] += 50;
+        }
+        else if (ciljiArray[i] == "Pridobitev mišične mase") {
+            delezi[1] += 27;
+            delezi[3] += 100;
+            delezi[2] += 67;
+        }
+        else if (ciljiArray[i] == "Okrevanje poškodbe") {
+            delezi[2] += 170;
+            delezi[3] += 25; 
+            delezi[4] += 230;
+        }
+        else if (ciljiArray[i] == "Pridobitev vzdržlivosti") {
+            delezi[1] += 15;
+            delezi[6] += 37;
+            delezi[5] += 63;
+            delezi[2] += 50;
+        }
+    }
+    
+    for (var i = 0; i < delezi.length; i++) {
+        if(delezi[i] > 0) {
+            podatki.push({"label":labels[i], "value": delezi[i]});
+        }   
+    }
+    
+    console.log(delezi);
+    
     FusionCharts.ready(function(){
-        var podatki = [{
-                "label": "Trening z utežmi",
-                "value": "20"
-            }, {
-                "label": "Fizioterapija",
-                "value": "30"
-            }, {
-                "label": "Vaje za motoriko",
-                "value": "10"
-            }, {
-                "label": "Počitek",
-                "value": "40"
-            }];
             
         var fusioncharts = new FusionCharts({
         type: 'doughnut2d',
