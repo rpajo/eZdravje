@@ -109,7 +109,6 @@ function generirajPodatke(stPacienta) {
                     key: "ehrId",
                     value: ehrId}]
             };
-            console.log("Uporabnik kreiran");
             $.ajax({
                 headers: {"Ehr-Session": sessionId},
                 url: baseUrl + "/demographics/party",
@@ -121,51 +120,15 @@ function generirajPodatke(stPacienta) {
                         console.log(ehrId);
                         document.getElementById('EHRid').innerHTML = ehrId;
                         
+                        console.log("Uporabnik kreiran");
                         // nalaganje podatkov v bazo 
                         ciljiArray.push(komentar);
                         localStorage[ehrId] = JSON.stringify(ciljiArray);
                         console.log("local saved: " +  JSON.stringify(ciljiArray));
-                        // $.ajaxSetup({
-                        //     headers: {"Ehr-Session": sessionId}
-                        // });
-                        var podatki = {
-                            // Struktura predloge je na voljo na naslednjem spletnem naslovu:
-                    // https://rest.ehrscape.com/rest/v1/template/Vital%20Signs/example
-                            "ctx/language": "en",
-                            "ctx/territory": "SI",
-                            "ctx/time": datumInUra,
-                            "vital_signs/height_length/any_event/body_height_length": telesnaVisina,
-                            "vital_signs/body_weight/any_event/body_weight": telesnaTeza,
-                            //systolic je v mojem primeru obsegPasu
-                            "vital_signs/blood_pressure/any_event/systolic": obsegPasu,
-                            // diastolic je v mojem primeru mascoba
-                            "vital_signs/blood_pressure/any_event/diastolic": mascoba,
-                        };
-                        var parametriZahteve = {
-                            ehrId: ehrId,
-                            templateId: 'Vital Signs',
-                            format: 'FLAT',
-                            committer: komentar
-                        };
-                        $.ajax({
-                            headers: {"Ehr-Session": sessionId},
-                            url: baseUrl + "/composition?" + $.param(parametriZahteve),
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(podatki),
-                            success: function (res) {
-                                // $("#GENfeedback").html(
-                                // "<span class='obvestilo label label-success fade-in'>" +
-                                // res.meta.href + ".</span>");
-                                document.getElementById('GENfeedback').innerHTML = 'Podatki uspešno naloženi';
-                                ciljiArray = ciljSave;
-                            },
-                            error: function(err) {
-                                $("#GENfeedback").html(
-                            '<div class="panel panel-default"><div class="panel-body">' +
-                            JSON.parse(err.responseText).userMessage + "</div></div>!");
-                            }
-                        });
+                        
+                        writeData(sessionId, ehrId, stPacienta, 1);
+                        
+                        ciljiArray = ciljSave;                            
                         document.getElementById('EHRid').innerHTML = "";
 
                     }
@@ -177,11 +140,84 @@ function generirajPodatke(stPacienta) {
             });
         }
     });
+}
 
+function writeData(sessionId, ehrId, stPacienta, i) {
+    var ranData = generateJsons(stPacienta, i);
+    console.log(ranData);
+    var podatki = {
+        // Struktura predloge je na voljo na naslednjem spletnem naslovu:
+// https://rest.ehrscape.com/rest/v1/template/Vital%20Signs/example
+        "ctx/language": "en",
+        "ctx/territory": "SI",
+        "ctx/time": ranData[4],
+        "vital_signs/height_length/any_event/body_height_length": ranData[1],
+        "vital_signs/body_weight/any_event/body_weight": ranData[0],
+        //systolic je v mojem primeru obsegPasu
+        "vital_signs/blood_pressure/any_event/systolic": ranData[3],
+        // diastolic je v mojem primeru mascoba
+        "vital_signs/blood_pressure/any_event/diastolic": ranData[2],
+    };
+    var parametriZahteve = {
+        ehrId: ehrId,
+        templateId: 'Vital Signs',
+        format: 'FLAT',
+        committer: "blank blank"
+    };
+    $.ajax({
+        headers: {"Ehr-Session": sessionId},
+        url: baseUrl + "/composition?" + $.param(parametriZahteve),
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(podatki),
+        success: function (res) {
+            document.getElementById('GENfeedback').innerHTML = 'Podatki uspešno naloženi';
+            if(i < 11) {
+                 writeData(sessionId, ehrId, stPacienta, i+1);
+            }
+        },
+        error: function(err) {
+            $("#GENfeedback").html(
+        '<div class="panel panel-default"><div class="panel-body">' +
+        JSON.parse(err.responseText).userMessage + "</div></div>!w!");
+        }
+    });
+                        
+}
 
+function generateJsons(stPacienta, i) {
+    var output;
+    console.log("Pacient: " +stPacienta);
+    if(stPacienta == 1) {
+        telesnaTeza = numGen(75, 100);
+        telesnaVisina = numGen(190, 200);
+        mascoba = numGen(8, 20);
+        obsegPasu = numGen(90, 110);
+        datumInUra = "2016-"+i+"-"+numGen(1,30);
+    }
+    else if (stPacienta == 2){
+        telesnaTeza = numGen(40, 60);
+        telesnaVisina = numGen(190, 200);
+        mascoba = numGen(10, 20);
+        obsegPasu = numGen(50, 60);
+        datumInUra = "2016-"+i+"-"+numGen(1,30);
+    }
+    
+    else if (stPacienta == 3){
+        telesnaTeza = numGen(124, 200);
+        telesnaVisina = numGen(190, 200);
+        mascoba = numGen(25, 50);
+        obsegPasu = numGen(120, 190);
+        datumInUra = "2016-"+i+"-"+numGen(1,30);
+    }
+    output = [telesnaTeza, telesnaVisina, mascoba, obsegPasu, datumInUra];
+    
+    return output;
 }
 
 function getGenerated(stPacienta) {
+    clearCilj();
+    
     if (stPacienta == 1) {
         document.getElementById("searchEHR").value = uporabnik1;
         document.getElementById("EHRid").value = uporabnik1;
@@ -357,9 +393,6 @@ function uploadData(newUser) {
         ciljiArray.push(komentar);
         localStorage[ehrId] = JSON.stringify(ciljiArray);
         console.log("local saved: " +  JSON.stringify(ciljiArray));
-		// $.ajaxSetup({
-		//     headers: {"Ehr-Session": sessionId}
-		// });
 		var podatki = {
 			// Struktura predloge je na voljo na naslednjem spletnem naslovu:
       // https://rest.ehrscape.com/rest/v1/template/Vital%20Signs/example
@@ -518,20 +551,23 @@ $(function() {
         document.getElementById("opisVaje").innerHTML = 'Opis vaje ni na voljo <i class="fa fa-frown-o" aria-hidden="true"></i>';
     }
     
+    document.getElementById("slikaVaje").innerHTML = "";
     // iskanje slike
+    console.log(vaje[indexVaje]);
     $.ajax({
-        url: "https://wger.de/api/v2/exerciseimage/"+vaje[i].id,
+        url: "https://wger.de/api/v2/exerciseimage/?exercise="+vaje[indexVaje].id,
         success: function( data ) {
-        imgSrc = data.image;
-
-        console.log(width);
-        document.getElementById("slikaVaje").innerHTML = ('<img src="'+imgSrc+'" class="img-rounded" alt="Slika vaje" width="' + width + '" height="' + width + '">');
+            imgSrc = data.results[0].image;
+            document.getElementById("slikaVaje").innerHTML = ('<img src="'+imgSrc+'" class="img-rounded" alt="Slika vaje" width="' + width + '" height="' + width + '">');
         },
         error: function() { 
             document.getElementById("slikaVaje").innerHTML = ('<i style="right:'+width+'" class="fa fa-file-image-o fa-5x" aria-hidden="true"></i> Slika vaje ni na voljo');
         }
     });
-    
+    console.log(imgSrc);
+    if(imgSrc == undefined || imgSrc == null) {
+        document.getElementById("slikaVaje").innerHTML = ('<i style="right:'+width+'" class="fa fa-file-image-o fa-5x" aria-hidden="true"></i> Slika vaje ni na voljo');
+    }
    
   });
 });
@@ -716,6 +752,7 @@ function getUserData() {
 
 function normalize(data, type) {
     console.log("Obdelujem podatke");
+    console.log(data);
     var mesci = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec"];
     
     var output = [];
