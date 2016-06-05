@@ -24,6 +24,7 @@ body {
 	background-image: url("../../slike/ozadje.jpg") ;
     background-attachment: fixed;
     background-position: center;
+    background-size: cover;
 }
 
 blockquote {

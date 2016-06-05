@@ -39,16 +39,64 @@ function generirajPodatke(stPacienta) {
 }
 
 // TODO: Tukaj implementirate funkcionalnost, ki jo podpira vaša aplikacija
+var ciljiArray = [];
 function addCilj(){
   
   var li = document.createElement("li");
-  var input = document.getElementById("ciljiInput");
-  li.innerHTML = input.value;
+  var input = document.getElementById("newCilj");
+  var value =  input.options[input.selectedIndex].value;
+  li.innerHTML = value;
   li.className = "list-group-item";
-  if (true) {
-    input.value = "";
-    $("#cilji").append(li);
-  }
+  
+  ciljiArray.push(value);
+  console.log(ciljiArray);
+  $("#cilji").append(li);
+}
+
+function getPredloge() {
+    $('#predlogi').empty();
+    
+    for (var i = 0; i < ciljiArray.length; i++) {
+        console.log(ciljiArray[i]);
+        var li = document.createElement("li");
+        li.className = "list-group-item";
+        if (ciljiArray[i] == "Izguba teže") {
+            console.log("it");
+            li.innerHTML = "Dieta";
+            $("#predlogi").append(li);
+            li = document.createElement("li");
+            li.className = "list-group-item";
+            li.innerHTML = "Intervalni aerobni trening";
+            $("#predlogi").append(li);
+        }
+        else if (ciljiArray[i] == "Pridobitev mišične mase") {
+            console.log("mm");
+            li.innerHTML = "Trening z utežmi";
+            $("#predlogi").append(li);
+            li = document.createElement("li");
+            li.className = "list-group-item";
+            li.innerHTML = "Hrana bogata z proteini in minerali";
+            $("#predlogi").append(li);
+        }
+        else if (ciljiArray[i] == "Okrevanje poškodbe") {
+            console.log("op");
+            li.innerHTML = "Fizioterapija";
+            $("#predlogi").append(li);
+            li = document.createElement("li");
+            li.className = "list-group-item";
+            li.innerHTML = "Počitek";
+            $("#predlogi").append(li);
+        }
+        else if (ciljiArray[i] == "Pridobitev vzdržlivosti") {
+            console.log("pv");
+            li.innerHTML = "Anaeroban vadba";
+            $("#predlogi").append(li);
+            li = document.createElement("li");
+            li.className = "list-group-item";
+            li.innerHTML = "Povečevanje intnenzivnosti vaj";
+            $("#predlogi").append(li);
+        }
+    }
 }
 
 function addUser() {
@@ -217,6 +265,156 @@ function getUser() {
 	}
 }
 
+var vaje;
+var misice;
+$.get( "https://wger.de/api/v2/muscle/", function( data ) {
+    misice = data.results;
+    console.log(misice);
+    var select = document.getElementById("skupinaMisic");
+    for (var i = 0; i < misice.length; i++) {
+        var option = document.createElement('option');
+        option.text = misice[i].name;
+        select.add(option, i+1);
+    }
+});
+
+// kreacija seznama ob spremenitvi mišice
+$(function() {
+  $('#skupinaMisic').on('change', function(){
+    var selected = $(this).find("option:selected").val();
+    var searchId;
+    for (var i = 0; i < misice.length; i++) {
+        if(selected == misice[i].name) {
+            searchId = misice[i].id;
+            break;
+        }
+    }
+    // iskanje vaj te mišice
+    $.get( "https://wger.de/api/v2/exercise/?language=2&limit=100&muscles="+searchId, function( data ) {
+        vaje = data.results;
+        console.log(vaje);
+        $('#vaje').empty();
+        var select = document.getElementById("vaje");
+        var option = document.createElement('option');
+        option.text = "Izberite Vajo";
+        select.add(option, i+1)
+        for (var i = 0; i < vaje.length; i++) {
+            option = document.createElement('option');
+            option.text = vaje[i].name;
+            select.add(option, i+1);
+        }
+    });
+    
+  });
+});
+
+// prikaz izbrane vaje
+$(function() {
+    $('#vaje').on('change', function(){
+    var imgSrc;
+    var selected = $(this).find("option:selected").val();
+    console.log(selected);
+    var indexVaje;
+    var width = $("#isciVajo").width();
+    
+    for (var i = 0; i < vaje.length; i++) {
+        if(selected == vaje[i].name) {
+            indexVaje = i;
+            break;
+        }
+    }
+    console.log(indexVaje);
+    console.log(vaje[indexVaje]);
+
+    if(vaje[indexVaje].name != null && vaje[indexVaje].name.length != 0) {
+        document.getElementById("imeVaje").innerHTML = vaje[indexVaje].name;
+    }
+    else {
+        document.getElementById("imeVaje").innerHTML = 'Naslov vaje ni na voljo <i class="fa fa-frown-o" aria-hidden="true"></i>';
+    }
+    
+    if(vaje[indexVaje].description != null && vaje[indexVaje].description.length != 0) {
+        document.getElementById("opisVaje").innerHTML = vaje[indexVaje].description;
+    }
+    else {
+        document.getElementById("opisVaje").innerHTML = 'Opis vaje ni na voljo <i class="fa fa-frown-o" aria-hidden="true"></i>';
+    }
+    
+    // iskanje slike
+    $.ajax({
+        url: "https://wger.de/api/v2/exerciseimage/"+vaje[i].id,
+        success: function( data ) {
+        imgSrc = data.image;
+
+        console.log(width);
+        document.getElementById("slikaVaje").innerHTML = ('<img src="'+imgSrc+'" class="img-rounded" alt="Slika vaje" width="' + width + '" height="' + width + '">');
+        },
+        error: function() { 
+            document.getElementById("slikaVaje").innerHTML = ('<i style="right:'+width+'" class="fa fa-file-image-o fa-5x" aria-hidden="true"></i> Slika vaje ni na voljo');
+        }
+    });
+    
+   
+  });
+});
+var vseVaje = [];
+function isciVajo() {
+    var imeVaje = document.getElementById('isciVajo').value;
+    console.log("Iščem: "+ imeVaje);
+    if (vseVaje.length == 0) {
+        $.ajax({
+            url: "https://wger.de/api/v2/exercise/?language=2&limit=400",
+            success: function(data) {
+                vseVaje = data.results;
+                console.log(vseVaje.length);
+                search(imeVaje);
+            },
+            error: function() { 
+                document.getElementById("imeVaje").innerHTML = 'Ta vaja ni bila najdena <i class="fa fa-frown-o" aria-hidden="true"></i>';
+                document.getElementById("opisVaje").innerHTML = "";
+                document.getElementById("slikaVaje").innerHTML = "";
+            }
+        });
+    }
+    else {
+        search(imeVaje);
+    }
+}
+
+function search(imeVaje) {
+    var indexVaje = -1;
+    for (var i = 0; i < vseVaje.length; i++) {
+        //console.log(vseVaje[i].name.toLowerCase());
+        if(imeVaje.toLowerCase() == vseVaje[i].name.toLowerCase()) {
+            indexVaje = i;
+            break;
+        }
+    }
+    if (indexVaje != -1) {
+        var width = $("#isciVajo").width();
+        document.getElementById("imeVaje").innerHTML = vseVaje[indexVaje].name;
+        document.getElementById("opisVaje").innerHTML = vseVaje[indexVaje].description;
+        //iskanje slike
+        $.ajax({
+            url: "https://wger.de/api/v2/exerciseimage/"+vseVaje[indexVaje].id,
+            success: function( data ) {
+            imgSrc = data.image;
+
+            console.log(width);
+            document.getElementById("slikaVaje").innerHTML = ('<img src="'+imgSrc+'" class="img-rounded" alt="Slika vaje" width="' + width + '" height="' + width + '">');
+            },
+            error: function() { 
+                document.getElementById("slikaVaje").innerHTML = ('<i style="right:'+width+'" class="fa fa-file-image-o fa-5x" aria-hidden="true"></i> Slika vaje ni na voljo');
+            }
+        });
+    }
+    else {
+        document.getElementById("imeVaje").innerHTML = 'Ta vaja ni bila najdena <i class="fa fa-frown-o" aria-hidden="true"></i>';
+        document.getElementById("opisVaje").innerHTML = "";
+        document.getElementById("slikaVaje").innerHTML = "";
+    }
+}
+
 
 var dataTeza;
 var dataMascobaPas;
@@ -240,29 +438,6 @@ function getUserData() {
 				var uporabnik = data.party;
 
                 $.ajax({
-                    url: baseUrl + "/view/" + ehrId + "/" + "weight",
-                    type: 'GET',
-                    headers: {"Ehr-Session": sessionId},
-                    success: function (res) {
-                        if (res.length > 0) {
-                            dataTeza = res;
-                            document.getElementById('teza').value = dataTeza[0].weight;
-                            // console.log(dataTeza);
-                            normalTeza = normalize(dataTeza, "teza");
-                        } else {
-                            $("#saveFeedback").html(
-                            "<span class='obvestilo label label-warning fade-in'>" +
-                            "Ni podatkov!</span>");
-                        }
-                    },
-                    error: function() {
-                        $("#saveFeedback").html(
-                        "<span class='obvestilo label label-danger fade-in'>Napaka '" +
-                        JSON.parse(err.responseText).userMessage + "'!");
-                    }
-                });
-                
-                $.ajax({
                     url: baseUrl + "/view/" + ehrId + "/" + "blood_pressure",
                     type: 'GET',
                     headers: {"Ehr-Session": sessionId},
@@ -285,6 +460,30 @@ function getUserData() {
                         JSON.parse(err.responseText).userMessage + "'!");
                     }
                 });
+                
+                $.ajax({
+                    url: baseUrl + "/view/" + ehrId + "/" + "weight",
+                    type: 'GET',
+                    headers: {"Ehr-Session": sessionId},
+                    success: function (res) {
+                        if (res.length > 0) {
+                            dataTeza = res;
+                            document.getElementById('teza').value = dataTeza[0].weight;
+                            // console.log(dataTeza);
+                            normalTeza = normalize(dataTeza, "teza");
+                        } else {
+                            $("#saveFeedback").html(
+                            "<span class='obvestilo label label-warning fade-in'>" +
+                            "Ni podatkov!</span>");
+                        }
+                    },
+                    error: function() {
+                        $("#saveFeedback").html(
+                        "<span class='obvestilo label label-danger fade-in'>Napaka '" +
+                        JSON.parse(err.responseText).userMessage + "'!");
+                    }
+                });
+                
                 
                 $.ajax({
                     url: baseUrl + "/view/" + ehrId + "/" + "height",
