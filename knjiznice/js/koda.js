@@ -147,7 +147,7 @@ function writeData(sessionId, ehrId, stPacienta, i) {
     console.log(ranData);
     var podatki = {
         // Struktura predloge je na voljo na naslednjem spletnem naslovu:
-// https://rest.ehrscape.com/rest/v1/template/Vital%20Signs/example
+    // https://rest.ehrscape.com/rest/v1/template/Vital%20Signs/example
         "ctx/language": "en",
         "ctx/territory": "SI",
         "ctx/time": ranData[4],
@@ -312,9 +312,7 @@ function addUser() {
 		$("#saveFeedback").html("<span class='obvestilo label " +
       "label-warning fade-in'>Prosim vnesite zahtevane podatke!</span>");
 	} else {
-		// $.ajaxSetup({
-		//     headers: {"Ehr-Session": sessionId}
-		// });
+
 		$.ajax({
             headers: {"Ehr-Session": sessionId},
 		    url: baseUrl + "/ehr",
@@ -331,15 +329,13 @@ function addUser() {
                         value: ehrId}]
 		        };
 		        $.ajax({
+                    headers: {"Ehr-Session": sessionId},
 		            url: baseUrl + "/demographics/party",
 		            type: 'POST',
 		            contentType: 'application/json',
 		            data: JSON.stringify(partyData),
 		            success: function (party) {
 		                if (party.action == 'CREATE') {
-		                //     $("#kreirajSporocilo").html("<span class='obvestilo " +
-                        //   "label label-success fade-in'>Uspešno kreiran EHR '" +
-                        //   ehrId + "'.</span>");
 		                   document.getElementById('newEHR').innerHTML = ehrId;
                             console.log(ehrId);
                             document.getElementById('upload').disabled = false;
@@ -347,6 +343,8 @@ function addUser() {
 		                }
 		            },
 		            error: function(err) {
+                        document.getElementById('upload').disabled = true;
+                            document.getElementById('create').disabled = false;
 		            	$("#newEHR").html("<span class='obvestilo label " +
                     "label-danger fade-in'>Napaka '" +
                     JSON.parse(err.responseText).userMessage + "'!");
@@ -387,8 +385,7 @@ function uploadData(newUser) {
     }
     console.log(ehrId);
 	if (!ehrId || ehrId.trim().length == 0) {
-		$("#saveFeedback").html("<span class='obvestilo label " +
-      "label-warning fade-in'>Naložite uporabnika z ustreznim erhId</span>");
+		$("#saveFeedback").html('<div class="alert alert-warning" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Naložite uporabnika z ustreznim ehrId</div>');
 	} else {
         ciljiArray.push(komentar);
         localStorage[ehrId] = JSON.stringify(ciljiArray);
@@ -419,9 +416,7 @@ function uploadData(newUser) {
 		    contentType: 'application/json',
 		    data: JSON.stringify(podatki),
 		    success: function (res) {
-		        $("#saveFeedback").html(
-              "<span class='obvestilo label label-success fade-in'>" +
-              res.meta.href + ".</span>");
+		        $("#saveFeedback").html('<div class="alert alert-success" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Podatki so uspešno naloženi</div>');
               document.getElementById('newFeedback').innerHTML = 'Podatki uspešno naloženi';
 		    },
 		    error: function(err) {
@@ -648,9 +643,9 @@ function getUserData() {
         $("#saveFeedback").html('<div class="alert alert-warning" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Prosim vnesite zahtevan podatek!</div>')
     } else {
         var temp = JSON.parse(localStorage.getItem(ehrId));
-        console.log("-------" + temp);
+        //console.log("-------" + temp);
         document.getElementById("comment").value = temp[temp.length-1];
-        ciljiArray = [];
+        clearCilj();
         for(var i = 0; i < temp.length-1; i++) {
             ciljiArray[i] = temp[i];
             var li = document.createElement("li");
@@ -737,17 +732,15 @@ function getUserData() {
                         }
                     },
                     error: function() {
-                        $("#saveFeedback").html(
-                        "<span class='obvestilo label label-danger fade-in'>Napaka '" +
-                        JSON.parse(err.responseText).userMessage + "'!");
+                        $("#saveFeedback").html('<div class="panel panel-default"><div class="panel-body">' +
+                            JSON.parse(err.responseText).userMessage + "</div></div>!");
                     }
                 });
 
 	    	},
 	    	error: function(err) {
-	    		$("#saveFeedback").html(
-            "<span class='obvestilo label label-danger fade-in'>Napaka '" +
-            JSON.parse(err.responseText).userMessage + "'!");
+	    		$("#saveFeedback").html('<div class="panel panel-default"><div class="panel-body">' +
+                JSON.parse(err.responseText).userMessage + "</div></div>!");
 	    	}
 		});
 	}
@@ -776,22 +769,6 @@ function normalize(data, type) {
     return output;
    
 }
-
-function clearCreate() {
-    document.getElementById('newIme').value = '';
-    document.getElementById('newPriimek').value = '';
-    document.getElementById('newDatumRojstva').value = '';
-    document.getElementById('newTeza').value = '';
-    document.getElementById('newMascoba').value = '';
-    document.getElementById('newVisina').value = '';
-    document.getElementById('newObsegPasu').value = '';
-    document.getElementById('newComment').value = '';
-    
-    $('#newUser').on('hidden', function() {
-        $(this).removeData('modal');
-    });
-}
-
 
 function getDate() {
     var today = new Date();
