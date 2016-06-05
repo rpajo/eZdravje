@@ -30,12 +30,177 @@ function getSessionId() {
  * @param stPacienta zaporedna številka pacienta (1, 2 ali 3)
  * @return ehrId generiranega pacienta
  */
+
+var uporabnik1 = "";
+var uporabnik2 = "";
+var uporabnik2 = "";
+
 function generirajPodatke(stPacienta) {
-  ehrId = "";
+    ehrId = "";
+    sessionId = getSessionId();
+    
+    var ime; var priimek; var datumRojstva; var telesnaTeza; var telesnaVisina; 
+    var mascoba; var komentar; var obsegPasu; var datumInUra; var ciljSave;
+    
+    //fit uporabnik
+    if (stPacienta == 1) {
+        ime = "Ragnar";
+        priimek = "Lodbrok";
+        datumRojstva = "1980-05-04";
+        telesnaTeza = numGen(80, 100);
+        telesnaVisina = numGen(190, 200);
+        mascoba = numGen(10, 15);
+        obsegPasu = numGen(90, 110);
+        komentar = "Posameznik je fizično zelo fit in zdrav. Njegov cilj je vzdrževanje njegove forme, poleg tega pa pridobitev še dodatne mišične mase.";
+        datumInUra = getDate;
+        ciljSave = ciljiArray;
+        ciljiArray = ["Pridobitev mišične mase", "Pridobitev vzdržlivosti"];
+    }
+    else if (stPacienta == 2) {
+        ime = "Lagertha";
+        priimek = "Ingstad";
+        datumRojstva = "1990-11-23";
+        telesnaTeza = numGen(45, 50);
+        telesnaVisina = numGen(170, 185);
+        mascoba = numGen(6, 12);
+        obsegPasu = numGen(50, 60);
+        komentar = "Uporabnica je visoke in (pre)vitke postave. Svetuje se ji, naj se zredi in pridobi na gibljivosti in mišičnemi tkivu.";
+        datumInUra = getDate;
+        ciljSave = ciljiArray;
+        ciljiArray = ["Rridobitev mišične mase", "Pridobitev vzdržlivosti"];
+    }
+    else if (stPacienta == 3) {
+        ime = "Hodor";
+        priimek = "Hodor";
+        datumRojstva = "1975-01-01";
+        telesnaTeza = numGen(134, 173);
+        telesnaVisina = numGen(200, 250);
+        mascoba = numGen(25, 40);
+        obsegPasu = numGen(150, 183);
+        komentar = "Posameznik je zelo močne postave. Ima poškodovano hrbtenico in hrbtne mišice, zaradi stalnega vlečenja takih in drugačnih uteži. Po telesu ima tudi več prask in modric. Priporočen počitek, hujšanje in nasploh krepitev telesa.";
+        datumInUra = getDate;
+        ciljSave = ciljiArray;
+        ciljiArray = ["Okrevanje poškodbe", "Izguba teže", "Rridobitev mišične mase", "Pridobitev vzdržlivosti"];
+    }
 
-  // TODO: Potrebno implementirati
+    $.ajax({
+        headers: {"Ehr-Session": sessionId},
+        url: baseUrl + "/ehr",
+        type: 'POST',
+        success: function (data) {
+            var ehrId = data.ehrId;
+            if(stPacienta == 1) {
+                uporabnik1 = ehrId;
+                $('#get1').attr("disabled", false);
+            }
+            else if (stPacienta == 2) {
+                uporabnik2 = ehrId;
+                $('#get2').attr("disabled", false);
+            }
+            else if (stPacienta == 3) {
+                uporabnik3 = ehrId;
+                $('#get3').attr("disabled", false);
+            }
+            var partyData = {
+                firstNames: ime,
+                lastNames: priimek,
+                dateOfBirth: datumRojstva,
+                partyAdditionalInfo: [{
+                    key: "ehrId",
+                    value: ehrId}]
+            };
+            console.log("Uporabnik kreiran");
+            $.ajax({
+                headers: {"Ehr-Session": sessionId},
+                url: baseUrl + "/demographics/party",
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(partyData),
+                success: function (party) {
+                    if (party.action == 'CREATE') {
+                        console.log(ehrId);
+                        document.getElementById('EHRid').innerHTML = ehrId;
+                        
+                        // nalaganje podatkov v bazo 
+                        ciljiArray.push(komentar);
+                        localStorage[ehrId] = JSON.stringify(ciljiArray);
+                        console.log("local saved: " +  JSON.stringify(ciljiArray));
+                        // $.ajaxSetup({
+                        //     headers: {"Ehr-Session": sessionId}
+                        // });
+                        var podatki = {
+                            // Struktura predloge je na voljo na naslednjem spletnem naslovu:
+                    // https://rest.ehrscape.com/rest/v1/template/Vital%20Signs/example
+                            "ctx/language": "en",
+                            "ctx/territory": "SI",
+                            "ctx/time": datumInUra,
+                            "vital_signs/height_length/any_event/body_height_length": telesnaVisina,
+                            "vital_signs/body_weight/any_event/body_weight": telesnaTeza,
+                            //systolic je v mojem primeru obsegPasu
+                            "vital_signs/blood_pressure/any_event/systolic": obsegPasu,
+                            // diastolic je v mojem primeru mascoba
+                            "vital_signs/blood_pressure/any_event/diastolic": mascoba,
+                        };
+                        var parametriZahteve = {
+                            ehrId: ehrId,
+                            templateId: 'Vital Signs',
+                            format: 'FLAT',
+                            committer: komentar
+                        };
+                        $.ajax({
+                            headers: {"Ehr-Session": sessionId},
+                            url: baseUrl + "/composition?" + $.param(parametriZahteve),
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(podatki),
+                            success: function (res) {
+                                // $("#GENfeedback").html(
+                                // "<span class='obvestilo label label-success fade-in'>" +
+                                // res.meta.href + ".</span>");
+                                document.getElementById('GENfeedback').innerHTML = 'Podatki uspešno naloženi';
+                                ciljiArray = ciljSave;
+                            },
+                            error: function(err) {
+                                $("#GENfeedback").html(
+                            '<div class="panel panel-default"><div class="panel-body">' +
+                            JSON.parse(err.responseText).userMessage + "</div></div>!");
+                            }
+                        });
+                        document.getElementById('EHRid').innerHTML = "";
 
-  return ehrId;
+                    }
+                },
+                error: function(err) {
+                    $("#GENfeedback").html('<div class="panel panel-default"><div class="panel-body">' +
+                JSON.parse(err.responseText).userMessage + "</div></div>!");
+                }
+            });
+        }
+    });
+
+
+}
+
+function getGenerated(stPacienta) {
+    if (stPacienta == 1) {
+        document.getElementById("searchEHR").value = uporabnik1;
+        document.getElementById("EHRid").value = uporabnik1;
+    }
+    else if (stPacienta == 2) {
+       document.getElementById("searchEHR").value = uporabnik2;
+       document.getElementById("EHRid").value = uporabnik2;
+    }
+    else if (stPacienta == 3) {
+        document.getElementById("searchEHR").value = uporabnik3;
+        document.getElementById("EHRid").value = uporabnik3;
+    }
+    
+    getUser();
+    getUserData();
+}
+
+function numGen(min, max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
 }
 
 // TODO: Tukaj implementirate funkcionalnost, ki jo podpira vaša aplikacija
@@ -105,20 +270,17 @@ function addUser() {
     var ime = $("#newIme").val();
     var priimek = $("#newPriimek").val();
     var datumRojstva = $("#newDatumRojstva").val();
-    var teza = $("#newTeza").val();
-    var visina = $("#newVisina").val();
-    var mascoba = $("#newMascoba").val();
-    var kometar = $("newComment").val();
     
-    if (!ime || !priimek || !datumRojstva || !teza || !visina || ime.trim().length == 0 ||
+    if (!ime || !priimek || !datumRojstva || ime.trim().length == 0 ||
       priimek.trim().length == 0 || datumRojstva.trim().length == 0) {
 		$("#saveFeedback").html("<span class='obvestilo label " +
       "label-warning fade-in'>Prosim vnesite zahtevane podatke!</span>");
 	} else {
-		$.ajaxSetup({
-		    headers: {"Ehr-Session": sessionId}
-		});
+		// $.ajaxSetup({
+		//     headers: {"Ehr-Session": sessionId}
+		// });
 		$.ajax({
+            headers: {"Ehr-Session": sessionId},
 		    url: baseUrl + "/ehr",
 		    type: 'POST',
 		    success: function (data) {
@@ -195,9 +357,9 @@ function uploadData(newUser) {
         ciljiArray.push(komentar);
         localStorage[ehrId] = JSON.stringify(ciljiArray);
         console.log("local saved: " +  JSON.stringify(ciljiArray));
-		$.ajaxSetup({
-		    headers: {"Ehr-Session": sessionId}
-		});
+		// $.ajaxSetup({
+		//     headers: {"Ehr-Session": sessionId}
+		// });
 		var podatki = {
 			// Struktura predloge je na voljo na naslednjem spletnem naslovu:
       // https://rest.ehrscape.com/rest/v1/template/Vital%20Signs/example
@@ -218,6 +380,7 @@ function uploadData(newUser) {
 		    committer: komentar
 		};
 		$.ajax({
+            headers: {"Ehr-Session": sessionId},
 		    url: baseUrl + "/composition?" + $.param(parametriZahteve),
 		    type: 'POST',
 		    contentType: 'application/json',
@@ -246,9 +409,9 @@ function getUser() {
         $("#saveFeedback").html('<div class="alert alert-warning" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Prosim vnesite zahtevan podatek!</div>')
 	} else {
 		$.ajax({
+            headers: {"Ehr-Session": sessionId},
 			url: baseUrl + "/demographics/ehr/" + ehrId + "/party",
 			type: 'GET',
-			headers: {"Ehr-Session": sessionId},
 	    	success: function (data) {
                 //.firstNames = ime; .lestNames = priimek; dateOfBirth = rojstvo;
 				uporabnik = data.party;
@@ -258,19 +421,19 @@ function getUser() {
                document.getElementById('ime').value = uporabnik.firstNames;
                document.getElementById('priimek').value = uporabnik.lastNames;
                document.getElementById('datumRojstva').value = uporabnik.dateOfBirth.substring(0,10);
-               document.getElementById('visina').value = "";
-               document.getElementById('teza').value = ""; 
-               document.getElementById('bmi').value = ""; 
-               document.getElementById('obsegPasu').value = ""; 
-               document.getElementById('bai').value = "";     
-               document.getElementById('mascoba').value = ""; 
-               document.getElementById('visina').value = "";
-               document.getElementById('BAIfeedback').innerHTML = ""; 
-               document.getElementById('BMIfeedback').innerHTML = ""; 
-               document.getElementById('datum').value = ""; 
-               document.getElementById('comment').value = ""; 
-               ciljiArray = [];
-               $("#cilji").empty();
+            //    document.getElementById('visina').value = "";
+            //    document.getElementById('teza').value = ""; 
+            //    document.getElementById('bmi').value = ""; 
+            //    document.getElementById('obsegPasu').value = ""; 
+            //    document.getElementById('bai').value = "";     
+            //    document.getElementById('mascoba').value = ""; 
+            //    document.getElementById('visina').value = "";
+            //    document.getElementById('BAIfeedback').innerHTML = ""; 
+            //    document.getElementById('BMIfeedback').innerHTML = ""; 
+            //    document.getElementById('datum').value = ""; 
+            //    document.getElementById('comment').value = ""; 
+            //    ciljiArray = [];
+            //    $("#cilji").empty();
         },
 			error: function(err) {
 				$("#saveFeedback").html('<div class="alert alert-danger" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Napaka: ' +
@@ -457,21 +620,21 @@ function getUserData() {
             li.innerHTML = value;
             li.className = "list-group-item";
             ciljiArray.push(value);
-            console.log(ciljiArray);
+            // console.log(ciljiArray);
             
             $("#cilji").append(li);
         }
 		$.ajax({
+            headers: {"Ehr-Session": sessionId},
 			url: baseUrl + "/demographics/ehr/" + ehrId + "/party",
 	    	type: 'GET',
-	    	headers: {"Ehr-Session": sessionId},
 	    	success: function (data) {
 				var uporabnik = data.party;
 
                 $.ajax({
+                    headers: {"Ehr-Session": sessionId},
                     url: baseUrl + "/view/" + ehrId + "/" + "blood_pressure",
                     type: 'GET',
-                    headers: {"Ehr-Session": sessionId},
                     success: function (res) {
                         if (res.length > 0) {
                             dataMascobaPas = res;
@@ -493,9 +656,9 @@ function getUserData() {
                 });
                 
                 $.ajax({
+                    headers: {"Ehr-Session": sessionId},
                     url: baseUrl + "/view/" + ehrId + "/" + "weight",
                     type: 'GET',
-                    headers: {"Ehr-Session": sessionId},
                     success: function (res) {
                         if (res.length > 0) {
                             dataTeza = res;
@@ -517,16 +680,16 @@ function getUserData() {
                 
                 
                 $.ajax({
+                    headers: {"Ehr-Session": sessionId},
                     url: baseUrl + "/view/" + ehrId + "/" + "height",
                     type: 'GET',
-                    headers: {"Ehr-Session": sessionId},
                     success: function (res) {
                         if (res.length > 0) {
                             dataHeight = res;
                             document.getElementById('visina').value = dataHeight[0].height;
                             document.getElementById('datum').value = dataHeight[0].time.substring(0,10);
-                            BAI();
-                            BMI();
+                            // BAI();
+                            // BMI();
                             // console.log(dataHeight);
                         } else {
                             $("#saveFeedback").html(
@@ -569,7 +732,7 @@ function normalize(data, type) {
          }
     }
     
-    console.log(output);
+    // console.log(output);
     return output;
    
 }

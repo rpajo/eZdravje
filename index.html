@@ -35,7 +35,8 @@
 				<ul class="nav navbar-nav">
 					<li><a href="opis.html">Opis ideje</a></li>
 					<li><a href="nacrt.html">Načrt informacijske rešitve</a></li>
-					<li><a href="#">Generiranje podatkov</a></li>
+					<!--<li><a href="#">Generiranje podatkov</a></li>-->
+					<li><a href="#generate" data-toggle="modal" data-target="#generate">Generiranje podatkov</a></li>
 					<li><a href="#newUser" data-toggle="modal" data-target="#newUser">Nov Uporabnik <span class="glyphicon glyphicon-plus-sign"></span></a></li>
 				</ul>
 			</div>
@@ -331,6 +332,34 @@
 			</div>
 		</div>
 
+		<!--Generiranje podatkov Modal-->
+		<div class="modal fade" id="generate" tabindex="-1" role="dialog" aria-labelledby="Generiranje podatkov" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Generiranje uporabnikov</h4>
+				</div>
+				<div class="modal-body">
+					<h3 align="center">Generiraj nove uporabnike</h2>
+					<button id="gen1" onclick="generirajPodatke(1)" type="button" class="btn btn-primary">Generiraj Uproabnika I</button>
+					<button id="gen2" onclick="generirajPodatke(2)" type="button" class="btn btn-primary">Generiraj Uproabnika II</button>
+					<button id="gen1" onclick="generirajPodatke(3)" type="button" class="btn btn-primary">Generiraj Uproabnika III</button>
+					<hr/>
+					<h3 align="center">Prikaži generirane uporabnike</h2>
+					<button id="get1" disabled="true" onclick="getGenerated(1)" type="button" data-dismiss="modal" class="btn btn-success">Prikaži Uproabnika I</button>
+					<button id="get2" disabled="true" onclick="getGenerated(2)" type="button" data-dismiss="modal" class="btn btn-success">Prikaži Uproabnika II</button>
+					<button id="get3" disabled="true" onclick="getGenerated(3)" type="button" data-dismiss="modal" class="btn btn-success">Prikaži Uproabnika III</button>
+					<div id="GENfeedback"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Zapri</button>
+				</div>
+				</div>
+			</div>
+		</div>
 
 	</div>
 	<!-- KONEC: Vsebina aplikacije -->
