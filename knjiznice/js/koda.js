@@ -179,7 +179,7 @@ function writeData(sessionId, ehrId, stPacienta, i) {
         error: function(err) {
             $("#GENfeedback").html(
         '<div class="panel panel-default"><div class="panel-body">' +
-        JSON.parse(err.responseText).userMessage + "</div></div>!w!");
+        JSON.parse(err.responseText).userMessage + "</div></div>");
         }
     });
                         
@@ -452,6 +452,7 @@ function getUser() {
 				$("#saveFeedback").html('<div class="alert alert-success" style=" margin-bottom:0px; padding-bottom:5px; padding-top:5px" role="alert">Uporabnik se je uspešno naložil</div>');
 			   document.getElementById('EHRid').value = ehrId;
                document.getElementById('ime').value = uporabnik.firstNames;
+               document.getElementById('imepriimek').innerHTML = uporabnik.firstNames + " " +  uporabnik.lastNames;
                document.getElementById('priimek').value = uporabnik.lastNames;
                document.getElementById('datumRojstva').value = uporabnik.dateOfBirth.substring(0,10);
             //    document.getElementById('visina').value = "";
@@ -557,8 +558,10 @@ $(function() {
     $.ajax({
         url: "https://wger.de/api/v2/exerciseimage/?exercise="+vaje[indexVaje].id,
         success: function( data ) {
-            imgSrc = data.results[0].image;
-            document.getElementById("slikaVaje").innerHTML = ('<img src="'+imgSrc+'" class="img-rounded" alt="Slika vaje" width="' + width + '" height="' + width + '">');
+            if (data.results.length > 0) {
+                imgSrc = data.results[0].image;
+                document.getElementById("slikaVaje").innerHTML = ('<img src="'+imgSrc+'" class="img-rounded" alt="Slika vaje" width="' + width + '" height="' + width + '">');
+            }
         },
         error: function() { 
             document.getElementById("slikaVaje").innerHTML = ('<i style="right:'+width+'" class="fa fa-file-image-o fa-5x" aria-hidden="true"></i> Slika vaje ni na voljo');
@@ -819,7 +822,7 @@ function BMI() {
     if(bmi < 18.5) {
         document.getElementById('BMIfeedback').innerHTML = '<div class="alert alert-danger" style="margin-top:10px; margin-bottom:0px; padding-bottom:10px; padding-top:10px" role="alert">Sodeč po BMI ste podhranjeni</div>';
     }
-    else if (bmi < 30) {
+    else if (bmi < 25) {
         document.getElementById('BMIfeedback').innerHTML = '<div class="alert alert-success" style="margin-top:10px; margin-bottom:0px; padding-bottom:10px; padding-top:10px" role="alert">Sodeč po BMI ste normalne teže</div>';        
     }
     else {

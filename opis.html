@@ -22,7 +22,7 @@
           <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
         <!-- ZAČETEK: Ime vaše aplikacije -->
-        <a class="navbar-brand" href="index.html">{ime vaše aplikacije}</a>
+        <a class="navbar-brand" href="index.html"><b><i>GitFit</i></b></a>
         <!-- KONEC: Ime vaše aplikacije -->
       </div>
       <div class="collapse navbar-collapse" id="menujska-vrstica">
@@ -45,7 +45,12 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Opis ideje, ki jo aplikacija podpira -->
-            <p><strong>TO-DO</strong>: Na tem mestu je potrebno dodati <strong>osnovni opis ideje rešitve</strong> (kakšen je osnovni SCENARIJ UPORABE, KDO je ciljna publika, za kakšen NAMEN se aplikacija uporablja).</p><p class="text-muted">Opis naj ne bo daljši od 200 besed.</p>
+            <p><h3 align="center">GitFit</h3>Aplikacija, ki sem jo implementiral je namenjena ljudem, ki se bodisi že ukvarjajo z športom, bodisi tistim, ki želijo postati bolj fit. 
+            Osnovna funkcija aplikacije je vodenje evidence svojih osnovih fizičnih lastnosti, to so: višina, teža, delež telesne maščobe, obseg pasu. Na podlagi teh faktorjev vam
+            aplikacija lahko izračuna BMI (Body Mass Index) in BAI (Body Adiposity Index). Meritve se hranijo v podatkovni bazi EHRscape z pomočjo njihovega APIja. V aplikaciji si 
+            lahko izberemo tudi do 4 cilje, ki jih bi radi dosegli. Na podlagi teh program predlaga, kakšne naj bodo naše aktivnosti in nam vizalno predstavi, kako naj bodo skozi teden
+             razporejene, da bi ta cilj dosegli. Z podatki iz baze lahko tudi izrišemo grafa sprmembe teže in maščobe skozi pretekle meritve. Ko pa se končno želimo lotiti z delom, nam
+             aplikacija ponuja še iskalnik vaj. Te lahko iščemo kot skupino vaj, na podagi željene mišice, ki bi jo radi trenirali ali pa direktno po imenu.</p>
             <!-- KONEC: Opis ideje, ki jo aplikacija podpira -->
           </div>
         </div>
@@ -55,7 +60,13 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Uporabljeni zunanji viri podatkov -->
-            <p><strong>TO-DO</strong>: Na tem mestu je navesti zunanji vir podatkov (URL naslov), na kakšen način ste ga uporabili (neposredni API klic, uvožena statična datoteka ipd.) in kaj je bil namen uporabe (kako se vključuje v osnovno idejo aplikacije).</p>
+            <p>Kot zunanji vir sem poleg EHRscape-a uporabil bazo podatkov WGER (https://wger.de/en/dashboard). Kar sem si poslužil iz baze podatkov, so bile vaje. Ko se stran naloži se
+              takoj izvede GET klic APIja [ https://wger.de/api/v2/muscle/ ], ki napolni seznam, ki predstavlja skupino mišic. Če izboru ene od mišic, se ponovno izvedi GET klic
+              [https://wger.de/api/v2/exercise/?muscle=&ltizbrana misica&gt], ki nam prense opis, naslov vaje in id, katerega uporabim v ponovnem GET klicu 
+              [https://wger.de/api/v2/exerciseimage/?exercise=&ltidVaje&gt].
+            </p>
+            <p>Ker je EHRscape precej spečifičen glede POST zahtev in nalaganja podatkov, sem za hranjenje komentarjev in ciljev uporabnikov, uporabil LocalStorage brskalnika.</p
+            ><p class="text-muted"><b>Opomba: </b> Baza je nekoliko pomankljiva. Ne vsebuje vse opise in slike za vsako vajo. Ponekod so podatki tudi malo pomešani ali v drugem jeziku  ¯\_(ツ)_/¯</p>
             <!-- KONEC: Uporabljeni zunanji viri podatkov -->
           </div>
         </div>
@@ -65,7 +76,9 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Master/detail načrtovalski vzorec -->
-            <p><strong>TO-DO</strong>: Na tem mestu morate navesti uporabljen master/detail načrtovalski vzorec in na kakšen način ga nameravate uporabiti.</p>
+            <p>Kot Master/Detail vzorec sem vzel vaje iz zunanje podatkovne baze in podatki o le-tej. Kot Master veljajo posamezne vaje, ki se hranijo v Comboboxu. Ob izboru vaje se 
+              v spodnjem meniju izpišejo podatki (Detail) o tej vaji in sicer, kot naslov vaje, opis in slika.</p>
+              <p> Do podrobnosti lahko pridemo na 2 načina: <b>Iskalnik vaj -> vaja</b>   ali pa    <b>Izbor mišice -> izbor vaje -> vaja</b>
             <!-- KONEC: Master/detail načrtovalski vzorec -->
           </div>
         </div>
@@ -75,7 +88,14 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Uporabljeni zunanji viri podatkov -->
-            <p><strong>TO-DO</strong>: Na tem mestu je potrebno navesti uporabljeno tehniko vizualizacije podatkov (za pomoč lahko uporabite primer iz <a href="https://github.com/mbostock/d3/wiki/Gallery" target="_blank">D3.js galerije</a>) in zakaj je bila ta tehnika izbrana.</p>
+            <p><b>Vizualiziral sem 3 skupine podatkov. Za to sem uporabil FusionCharts.</b></p>
+            <p>1. Primer je bil stolpčni diagram za prikaz spremembe telesne teže skozi merjenja. Ta tehnika nam točno predstavi, kakšna je bila teža uproabnika ob merjenju, kar je pri 
+              meritvah, kot je telesna teža, še posebej pomembna.
+            </p>
+            <p>2. Primer je bil črtni diagram za prikaz spremembe deleža maščobe v telesu. Vrednosti so povezane z črtami, ki predlagajo tudi, kakšne so bile vrednosti med merjenji, 
+              saj je točno vrednost težje določiti, kot recimo pri telesni teži.</p>
+            <p>3. Primer uprabe je bil tortni diagram, ki prikazuje, kako naj bi bile razdeljene aktivnosti. Z tem krožnim prikazom, uporabniku jasno vizualno predstavimo, koliko časa
+              naj namenijo določeni aktvnosti in mu pomagamo, da si vse skupaj lažje predstavlja, da bo temu planu čim bolje sledil.</p>
             <!-- KONEC: Uporabljeni zunanji viri podatkov -->
           </div>
         </div>
